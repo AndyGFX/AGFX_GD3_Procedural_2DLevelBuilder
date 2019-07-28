@@ -31,23 +31,28 @@ func Build()->void:
 	
 func HasUpWall(x:int,y:int)->bool:
 	var res=false
-	if self.data[x][y].up==1: res = true
+	if self.data[x][self.height-y-1].up==1: res = true
 	return res
 	
 func HasRightWall(x:int,y:int):
 	var res=false
-	if self.data[x][y].right==1: res = true
+	if self.data[x][self.height-y-1].right==1: res = true
 	return res
 	
 func HasDownWall(x:int,y:int):
 	var res=false
-	if self.data[x][y].down==1: res = true
+	if self.data[x][self.height-y-1].down==1: res = true
 	return res
 
 func HasLeftWall(x:int,y:int):
 	var res=false
-	if self.data[x][y].left==1: res = true
+	if self.data[x][self.height-y-1].left==1: res = true
 	return res
+	
+func GetRoom(x:int,y:int)->empty_room:
+	var _y = self.height - y -1
+	return self.data[x][_y]
+	pass
 	
 func GenerateMap()->void:
 	

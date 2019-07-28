@@ -127,7 +127,8 @@ func DrawRoomInterior(layer,room_x,room_y):
 #			self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
 
 			# test room type normal / ladder
-			if self.rooms.data[room_x][room_y].up==0:
+			#if self.rooms.data[room_x][room_y].up==0:
+			if self.rooms.GetRoom(room_x,room_y).down==0:
 				pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
 				self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
 			else:
@@ -152,9 +153,10 @@ func DrawRoomWalls(layer,room_x,room_y):
 		for y in range(0,self.roomSize.y):
 			
 			var  rx = room_x*self.roomSize.x + x 
-			var  ry = self.roomsCount.y*self.roomSize.y-(room_y*self.roomSize.y + y)-1
+			var  ry = self.roomSize.y + room_y*self.roomSize.y - y - 1
 			
-			if self.rooms.HasUpWall(room_x,room_y):				
+			
+			if self.rooms.HasUpWall(room_x,room_y):
 				var pixel = GetPixelPatternColor(self.wallPatterns[0],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
