@@ -4,6 +4,7 @@ class_name SceneBuilderTilemap
 enum eLayerType { BACKGROUND, BASE, FOREGROUND}
 enum ePattern {WALL,LADDER,PLATFORM,ONEWAYPLATFORM}
 
+
 var wallPatterns:Array = []
 var ladderPatterns:Array = []
 var platformPatterns:Array = []
@@ -116,7 +117,6 @@ func DrawRoomInterior(layer,room_x,room_y):
 		for y in range(0,self.roomSize.y):
 			
 			var  rx:int = room_x*self.roomSize.x + x 
-			#var  ry:int = self.roomsCount.y*self.roomSize.y-(room_y*self.roomSize.y + y)-1
 			var  ry:int = room_y*self.roomSize.x + y 
 			
 			
@@ -128,7 +128,7 @@ func DrawRoomInterior(layer,room_x,room_y):
 
 			# test room type normal / ladder
 			#if self.rooms.data[room_x][room_y].up==0:
-			if self.rooms.GetRoom(room_x,room_y).down==0:
+			if self.rooms.IsDown(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
 				self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
 			else:
@@ -148,27 +148,31 @@ func DrawTileToLayer(layer,pattern,rx,ry,pixel):
 func DrawRoomWalls(layer,room_x,room_y):
 	
 	var tilemap = layer.tilemap
-	
+	var  rx = 0
+	var  ry = 0
 	for x in range(0,self.roomSize.x):
 		for y in range(0,self.roomSize.y):
 			
-			var  rx = room_x*self.roomSize.x + x 
-			var  ry = self.roomSize.y + room_y*self.roomSize.y - y - 1
+			rx = room_x*self.roomSize.x + x 
 			
+			if self.rooms.origin_bottomleft:
+				ry = room_y*self.roomSize.y + y 
+			else:
+				ry = self.roomsCount.y*self.roomSize.y - room_y*self.roomSize.y - y - 1
 			
-			if self.rooms.IsUp(room_x,room_y,ProceduralRooms.eSide.EXIT):
+			if self.rooms.IsUp(room_x,room_y,ProceduralRooms.eSide.WALL):
 				var pixel = GetPixelPatternColor(self.wallPatterns[0],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
-			if self.rooms.IsRight(room_x,room_y,ProceduralRooms.eSide.EXIT):
+			if self.rooms.IsRight(room_x,room_y,ProceduralRooms.eSide.WALL):
 				var pixel = GetPixelPatternColor(self.wallPatterns[1],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
-			if self.rooms.IsDown(room_x,room_y,ProceduralRooms.eSide.EXIT):
+			if self.rooms.IsDown(room_x,room_y,ProceduralRooms.eSide.WALL):
 				var pixel = GetPixelPatternColor(self.wallPatterns[2],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
-			if self.rooms.IsLeft(room_x,room_y,ProceduralRooms.eSide.EXIT):
+			if self.rooms.IsLeft(room_x,room_y,ProceduralRooms.eSide.WALL):
 				var pixel = GetPixelPatternColor(self.wallPatterns[3],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
@@ -179,10 +183,10 @@ func DrawRoomForeground(tilemap,room_x,room_y):
 	
 func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	
-	# paint Background
-	if layer.type == eLayerType.BACKGROUND:
-		self.DrawRoomBackground(layer,room_x,room_y)
-		
+#	# paint Background
+#	if layer.type == eLayerType.BACKGROUND:
+#		self.DrawRoomBackground(layer,room_x,room_y)
+#
 	# paint base [platforms, laggders, ...]
 	if layer.type == eLayerType.BASE:
 		self.DrawRoomInterior(layer,room_x,room_y)
@@ -191,9 +195,9 @@ func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	if layer.type == eLayerType.BASE:
 		self.DrawRoomWalls(layer,room_x,room_y)
 	
-	# paint foreground decoration 
-	if layer.type == eLayerType.FOREGROUND:
-		self.DrawRoomForeground(layer,room_x,room_y)
+#	# paint foreground decoration 
+#	if layer.type == eLayerType.FOREGROUND:
+#		self.DrawRoomForeground(layer,room_x,room_y)
 
 	
 func GenerateLayer(layer:Dictionary)->void:
@@ -201,6 +205,7 @@ func GenerateLayer(layer:Dictionary)->void:
 	for y in range(0,self.roomsCount.y):
 		for x in range(0,self.roomsCount.x):
 			self.DrawRoom(layer,x,y)
+			print("["+String(x)+","+String(y)+"]="+self.rooms.ToString(x,y))
 
 # ----------------------------------------------------------------------------------------
 #

@@ -2,7 +2,7 @@ extends "ProceduralData.gd"
 
 class_name ProceduralRooms
 enum eSide {WALL,EXIT}
-var origin_bottomleft:bool = false
+var origin_bottomleft:bool = false # default origin [0,0] is TOP-LEFT
 var invert = false;
 var maze
 
@@ -71,7 +71,11 @@ func ToString(x,y):
 	pass
 	
 func GetRoom(x:int,y:int)->empty_room:
-	var _y = self.height - y -1
+	var _y = 0
+	if self.origin_bottomleft:
+		_y = self.height-y-1
+	else:
+		_y = y
 	return self.data[x][_y]
 	pass
 	
@@ -89,7 +93,7 @@ func GenerateMap()->void:
 		for y in range(0,self.height):
 			
 			mx = ((x*2) + 1)			
-			my = ((y*2) + 1)  # origin bottom/left
+			my = ((y*2) + 1)
 				
 			self.data[x][y].up = self.maze.data[mx][my-1].value
 			self.data[x][y].down = self.maze.data[mx][my+1].value
