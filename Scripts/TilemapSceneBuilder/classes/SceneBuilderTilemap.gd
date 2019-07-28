@@ -156,19 +156,19 @@ func DrawRoomWalls(layer,room_x,room_y):
 			var  ry = self.roomSize.y + room_y*self.roomSize.y - y - 1
 			
 			
-			if self.rooms.HasUpWall(room_x,room_y):
+			if self.rooms.IsUp(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				var pixel = GetPixelPatternColor(self.wallPatterns[0],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
-			if self.rooms.HasRightWall(room_x,room_y):
+			if self.rooms.IsRight(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				var pixel = GetPixelPatternColor(self.wallPatterns[1],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
-			if self.rooms.HasDownWall(room_x,room_y):
+			if self.rooms.IsDown(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				var pixel = GetPixelPatternColor(self.wallPatterns[2],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
-			if self.rooms.HasLeftWall(room_x,room_y):
+			if self.rooms.IsLeft(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				var pixel = GetPixelPatternColor(self.wallPatterns[3],x,y)
 				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
