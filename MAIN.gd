@@ -35,15 +35,23 @@ func _ready():
 	self.levelBuilder.AddLadderPattern(load("res://Sprites/Patterns/LADDER-003.png"))
 	
 	# assign scene tilemap
-	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
+	self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
 	self.levelBuilder.SetTargetTilemap($"Tilemaps/L1-BASE",SceneBuilderTilemap.eLayerType.BASE)
-	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L2-FRONT",SceneBuilderTilemap.eLayerType.FOREGROUND)
+	self.levelBuilder.SetTargetTilemap($"Tilemaps/L2-FRONT",SceneBuilderTilemap.eLayerType.FOREGROUND)
 	
-	# add pattern color definition
-	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.WALL,Color.black)
-	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.PLATFORM,Color.black)
-	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.LADDER,Color.green)
-	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.ONEWAYPLATFORM,Color.blue)
+	# add pattern color definition for:
+	
+	# BACKGROUND layer
+	# ...
+	
+	# BASE layer
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.WALL,Color.black)
+	#self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.PLATFORM,Color.black)
+	#self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.LADDER,Color.green)
+	#elf.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.ONEWAYPLATFORM,Color.blue)
+	
+	# FOREGROUND layer
+	# ...
 	
 	# initialzie builder
 	self.levelBuilder.Initialize(roomCounts,2019,false)

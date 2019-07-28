@@ -8,7 +8,7 @@ var wallPatterns:Array = []
 var ladderPatterns:Array = []
 var platformPatterns:Array = []
 var scanColor:Array = []
-var targetLayer:TileMap = null
+var targetLayers:Array = []
 var layerType:int = eLayerType.BASE
 var rooms:ProceduralRooms = null
 var roomsCount:Vector2 = Vector2(12,10)
@@ -54,8 +54,7 @@ func GenerateMinimap():
 #
 # ----------------------------------------------------------------------------------------
 func SetTargetTilemap(tm:TileMap, type:int)->void:
-	self.targetLayer = tm
-	self.layerType = type
+	self.targetLayers.append({"tilemap":tm,"type":type})	
 	pass
 
 # ----------------------------------------------------------------------------------------
@@ -85,61 +84,98 @@ func AddLadderPattern(sprite:Texture)->void:
 func AddPlatformPattern(sprite:Texture)->void:
 	self.platformPatterns.append(sprite.get_data())
 	pass
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
+func GetPixelPatternColor(pattern:Image,x,y)->Color:
+	var res:Color = Color.black
+	pattern.lock()
+	res=pattern.get_pixel(x,y)
+	pattern.unlock()
+	return res
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
+func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
+	for i in range(0,self.scanColor.size()):
+		if self.scanColor[i].layer == layer and self.scanColor[i].pattern==pattern and self.scanColor[i].color==color:
+			return self.scanColor[i].tile_id;
+	return -1
+	
+func DrawRoomBackground(tilemap,room_x,room_y):
+	pass
+	
+func DrawRoomInterior(tilemap,room_x,room_y):
+	pass
+	
+func DrawTileToLayer(layer,pattern,rx,ry,pixel):
+	var tile_id = GetTileIdByColor(layer.type,pattern,pixel)
+	if tile_id>=0:
+		layer.tilemap.set_cell(rx,ry,tile_id)
+	pass
 
-func DrawRoomWalls(room_x,room_y):
+func DrawRoomWalls(layer,room_x,room_y):
+	
+	var tilemap = layer.tilemap
+	
 	for x in range(0,self.roomSize.x):
 		for y in range(0,self.roomSize.y):
 			
 			var  rx = room_x*self.roomSize.x + x 
 			var  ry = self.roomsCount.y*self.roomSize.y-(room_y*self.roomSize.y + y)-1
 			
-			if self.rooms.HasUpWall(room_x,room_y):
-				self.wallPatterns[0].lock()
-				var pixel = self.wallPatterns[0].get_pixel(x,y)				
-				self.wallPatterns[0].unlock()
-				if pixel == Color.black:
-					self.targetLayer.set_cell(rx,ry,1)
+			if self.rooms.HasUpWall(room_x,room_y):				
+				var pixel = GetPixelPatternColor(self.wallPatterns[0],x,y)
+				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
 			if self.rooms.HasRightWall(room_x,room_y):
-				self.wallPatterns[1].lock()
-				var pixel = self.wallPatterns[1].get_pixel(x,y)				
-				self.wallPatterns[1].unlock()
-				if pixel == Color.black:
-					self.targetLayer.set_cell(rx,ry,1)
+				var pixel = GetPixelPatternColor(self.wallPatterns[1],x,y)
+				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
 			if self.rooms.HasDownWall(room_x,room_y):
-				self.wallPatterns[2].lock()
-				var pixel = self.wallPatterns[2].get_pixel(x,y)				
-				self.wallPatterns[2].unlock()
-				if pixel == Color.black:
-					self.targetLayer.set_cell(rx,ry,1)
+				var pixel = GetPixelPatternColor(self.wallPatterns[2],x,y)
+				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 					
 			if self.rooms.HasLeftWall(room_x,room_y):
-				self.wallPatterns[3].lock()
-				var pixel = self.wallPatterns[3].get_pixel(x,y)				
-				self.wallPatterns[3].unlock()
-				if pixel == Color.black:
-					self.targetLayer.set_cell(rx,ry,1)
+				var pixel = GetPixelPatternColor(self.wallPatterns[3],x,y)
+				self.DrawTileToLayer(layer,ePattern.WALL,rx,ry,pixel)
 		
-			self.targetLayer.update_bitmask_area(Vector2(rx,ry))
+			tilemap.update_bitmask_area(Vector2(rx,ry))
 
-func DrawRoom(room_x:int, room_y:int):
-
-			self.DrawRoomWalls(room_x,room_y)
+func DrawRoomForeground(tilemap,room_x,room_y):
+	pass
+	
+func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
+	
+	# paint Background
+	if layer.type == eLayerType.BACKGROUND:
+		self.DrawRoomBackground(layer,room_x,room_y)
+		
+	# paint base [platforms, laggders, ...]
+	if layer.type == eLayerType.BASE:
+		self.DrawRoomInterior(layer,room_x,room_y)
+		
+	# paint wall 
+	if layer.type == eLayerType.BASE:
+		self.DrawRoomWalls(layer,room_x,room_y)
+	
+	# paint foreground decoration 
+	if layer.type == eLayerType.FOREGROUND:
+		self.DrawRoomForeground(layer,room_x,room_y)
 
 	
-func GenerateLayer_BASE()->void:
+func GenerateLayer(layer:Dictionary)->void:
+	
 	for y in range(0,self.roomsCount.y):
 		for x in range(0,self.roomsCount.x):
-			self.DrawRoom(x,y)
-			pass
-	pass
+			self.DrawRoom(layer,x,y)
+
 # ----------------------------------------------------------------------------------------
 #
 # ----------------------------------------------------------------------------------------
 func Build()->void:
-	self.GenerateLayer_BASE()	
-	pass
+	for layer in range(0,targetLayers.size()):
+		self.GenerateLayer(self.targetLayers[layer])	
 	
 	
 	
