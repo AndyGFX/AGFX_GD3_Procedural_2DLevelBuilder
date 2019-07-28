@@ -10,5 +10,17 @@
 		"name": "WALL",
 		"src": "res://Sprites/AutoTile_1.png",
 		"width": 16
+	},
+	"2": {
+		"height": 16,
+		"name": "ONWAY",
+		"src": "res://Sprites/AutoTile_OneWay.png",
+		"width": 16
+	},
+	"3": {
+		"height": 16,
+		"name": "LADDER",
+		"src": "res://Sprites/AutoTile_Ladder.png",
+		"width": 16
 	}
 }

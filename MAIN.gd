@@ -46,9 +46,9 @@ func _ready():
 	
 	# BASE layer
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.WALL,Color.black)
-	#self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.PLATFORM,Color.black)
-	#self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.LADDER,Color.green)
-	#elf.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,0,SceneBuilderTilemap.ePattern.ONEWAYPLATFORM,Color.blue)
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.PLATFORM,Color.black)	
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,2,SceneBuilderTilemap.ePattern.ONEWAYPLATFORM,Color.blue)
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,3,SceneBuilderTilemap.ePattern.LADDER,Color.green)
 	
 	# FOREGROUND layer
 	# ...
@@ -67,7 +67,9 @@ func _ready():
 func PrepareTilesets()->void:
 	var images_json = { 		
 		"0" : {"name": "BACK" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_0.png"},
-		"1" : {"name": "WALL" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_1.png"}
+		"1" : {"name": "WALL" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_1.png"},
+		"2" : {"name": "ONWAY" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_OneWay.png"},
+		"3" : {"name": "LADDER" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_Ladder.png"}
 	}
 	Utils.SaveJSON("res://TilesetImages.data",images_json,true)
 	tilesetBuilder.BuildFromFile(Utils.LoadJSON("res://TilesetImages.data"),"BASE-ProceduralTilesets.tres")
