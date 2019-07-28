@@ -48,7 +48,9 @@ func _ready():
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.WALL,Color.black)
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.PLATFORM,Color.black)	
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,2,SceneBuilderTilemap.ePattern.ONEWAYPLATFORM,Color.blue)
+	
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,3,SceneBuilderTilemap.ePattern.LADDER,Color.green)
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.ePattern.LADDER,Color.black)
 	
 	# FOREGROUND layer
 	# ...

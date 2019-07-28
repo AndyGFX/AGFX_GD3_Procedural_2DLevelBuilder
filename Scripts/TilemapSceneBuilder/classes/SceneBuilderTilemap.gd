@@ -102,11 +102,41 @@ func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
 			return self.scanColor[i].tile_id;
 	return -1
 	
-func DrawRoomBackground(tilemap,room_x,room_y):
+func DrawRoomBackground(layer,room_x,room_y):
 	pass
 	
-func DrawRoomInterior(tilemap,room_x,room_y):
-	pass
+func DrawRoomInterior(layer,room_x,room_y):
+	
+	var tilemap = layer.tilemap
+	var pixel:Color = Color.black
+	var rnd_platform_id:int = rand_range(0,self.platformPatterns.size())
+	var rnd_ladder_id:int = rand_range(0,self.ladderPatterns.size())
+	
+	for x in range(0,self.roomSize.x):
+		for y in range(0,self.roomSize.y):
+			
+			var  rx:int = room_x*self.roomSize.x + x 
+			#var  ry:int = self.roomsCount.y*self.roomSize.y-(room_y*self.roomSize.y + y)-1
+			var  ry:int = room_y*self.roomSize.x + y 
+			
+			
+#			pixel = GetPixelPatternColor(self.platformPatterns[rnd_platform_id],x,y)
+#			self.DrawTileToLayer(layer,ePattern.PLATFORM,rx,ry,pixel)
+
+#			pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
+#			self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
+
+			# test room type normal / ladder
+			if self.rooms.data[room_x][room_y].up==0:
+				pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
+				self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
+			else:
+				pixel = GetPixelPatternColor(self.platformPatterns[rnd_platform_id],x,y)
+				self.DrawTileToLayer(layer,ePattern.PLATFORM,rx,ry,pixel)
+			
+			
+				
+			tilemap.update_bitmask_area(Vector2(rx,ry))
 	
 func DrawTileToLayer(layer,pattern,rx,ry,pixel):
 	var tile_id = GetTileIdByColor(layer.type,pattern,pixel)

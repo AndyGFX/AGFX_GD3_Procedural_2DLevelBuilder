@@ -9,7 +9,6 @@ script = ExtResource( 1 )
 roomCounts = Vector2( 5, 5 )
 
 [node name="Tilemaps" type="Node2D" parent="."]
-scale = Vector2( 0.5, 0.5 )
 
 [node name="L0-BACK" type="TileMap" parent="Tilemaps"]
 tile_set = ExtResource( 2 )
