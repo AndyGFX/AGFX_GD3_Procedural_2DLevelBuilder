@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://MAIN.gd" type="Script" id=1]
+[ext_resource path="res://TileSet/BASE-ProceduralTilesets.tres" type="TileSet" id=2]
+[ext_resource path="res://Sprites/dummy.png" type="Texture" id=3]
+
+[node name="MAIN" type="Node2D"]
+script = ExtResource( 1 )
+roomCounts = Vector2( 5, 5 )
+
+[node name="Tilemaps" type="Node2D" parent="."]
+scale = Vector2( 0.5, 0.5 )
+
+[node name="L0-BACK" type="TileMap" parent="Tilemaps"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="L1-BASE" type="TileMap" parent="Tilemaps"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="L2-FRONT" type="TileMap" parent="Tilemaps"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="Minimap" type="Sprite" parent="Tilemaps"]
+position = Vector2( 7, 6 )
+scale = Vector2( 8, 8 )
+texture = ExtResource( 3 )
+centered = false

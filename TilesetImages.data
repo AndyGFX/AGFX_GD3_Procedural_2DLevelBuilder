@@ -1,0 +1,14 @@
+{
+	"0": {
+		"height": 16,
+		"name": "BACK",
+		"src": "res://Sprites/AutoTile_0.png",
+		"width": 16
+	},
+	"1": {
+		"height": 16,
+		"name": "WALL",
+		"src": "res://Sprites/AutoTile_1.png",
+		"width": 16
+	}
+}

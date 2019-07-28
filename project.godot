@@ -1,0 +1,58 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "",
+"class": "ProceduralConways",
+"language": "GDScript",
+"path": "res://Scripts/Procedural/ProceduralConways.gd"
+}, {
+"base": "",
+"class": "ProceduralMaze",
+"language": "GDScript",
+"path": "res://Scripts/Procedural/ProceduralMaze.gd"
+}, {
+"base": "",
+"class": "ProceduralRooms",
+"language": "GDScript",
+"path": "res://Scripts/Procedural/ProceduralRooms.gd"
+}, {
+"base": "Reference",
+"class": "SceneBuilderTilemap",
+"language": "GDScript",
+"path": "res://Scripts/TilemapSceneBuilder/classes/SceneBuilderTilemap.gd"
+}, {
+"base": "Reference",
+"class": "TilesetBuilder",
+"language": "GDScript",
+"path": "res://Scripts/TilesetBuilder/TilesetBuilder.gd"
+} ]
+_global_script_class_icons={
+"ProceduralConways": "",
+"ProceduralMaze": "",
+"ProceduralRooms": "",
+"SceneBuilderTilemap": "",
+"TilesetBuilder": ""
+}
+
+[application]
+
+config/name="AGFX_GD3_Procedural_2DLevelBuilder"
+run/main_scene="res://MAIN.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+json_beautifier="*res://Scripts/Utils/json_beautifier.gd"
+Utils="*res://Scripts/Utils/Utils.gd"
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
