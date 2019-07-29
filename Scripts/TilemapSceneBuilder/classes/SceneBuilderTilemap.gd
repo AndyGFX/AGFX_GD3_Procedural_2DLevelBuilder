@@ -40,9 +40,9 @@ func GenerateMinimap():
 			
 			self.minimap.lock()
 			if (self.rooms.maze.data[x][y].value==0):
-				self.minimap.set_pixel(x,self.rooms.maze.height-y-1,Color(1,1,1,1))
+				self.minimap.set_pixel(x,y,Color(0,0,0,1))
 			else:
-				self.minimap.set_pixel(x,self.rooms.maze.height-y-1,Color(0,0,0,1))
+				self.minimap.set_pixel(x,y,Color(1,1,1,1))
 			self.minimap.unlock()
 	
 	# preview [0,0] pivot
@@ -119,24 +119,14 @@ func DrawRoomInterior(layer,room_x,room_y):
 			var  rx:int = room_x*self.roomSize.x + x 
 			var  ry:int = room_y*self.roomSize.x + y 
 			
-			
-#			pixel = GetPixelPatternColor(self.platformPatterns[rnd_platform_id],x,y)
-#			self.DrawTileToLayer(layer,ePattern.PLATFORM,rx,ry,pixel)
 
-#			pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
-#			self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
-
-			# test room type normal / ladder
-			#if self.rooms.data[room_x][room_y].up==0:
-			if self.rooms.IsDown(room_x,room_y,ProceduralRooms.eSide.EXIT):
+			if self.rooms.IsUp(room_x,room_y,ProceduralRooms.eSide.EXIT):
 				pixel = GetPixelPatternColor(self.ladderPatterns[rnd_ladder_id],x,y)
 				self.DrawTileToLayer(layer,ePattern.LADDER,rx,ry,pixel)
 			else:
 				pixel = GetPixelPatternColor(self.platformPatterns[rnd_platform_id],x,y)
 				self.DrawTileToLayer(layer,ePattern.PLATFORM,rx,ry,pixel)
-			
-			
-				
+
 			tilemap.update_bitmask_area(Vector2(rx,ry))
 	
 func DrawTileToLayer(layer,pattern,rx,ry,pixel):
@@ -155,10 +145,8 @@ func DrawRoomWalls(layer,room_x,room_y):
 			
 			rx = room_x*self.roomSize.x + x 
 			
-			if self.rooms.origin_bottomleft:
-				ry = room_y*self.roomSize.y + y 
-			else:
-				ry = self.roomsCount.y*self.roomSize.y - room_y*self.roomSize.y - y - 1
+			ry = room_y*self.roomSize.y + y 
+				
 			
 			if self.rooms.IsUp(room_x,room_y,ProceduralRooms.eSide.WALL):
 				var pixel = GetPixelPatternColor(self.wallPatterns[0],x,y)
@@ -202,8 +190,8 @@ func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	
 func GenerateLayer(layer:Dictionary)->void:
 	
-	for y in range(0,self.roomsCount.y):
-		for x in range(0,self.roomsCount.x):
+	for x in range(0,self.roomsCount.x):
+		for y in range(0,self.roomsCount.y):		
 			self.DrawRoom(layer,x,y)
 			print("["+String(x)+","+String(y)+"]="+self.rooms.ToString(x,y))
 

@@ -2,6 +2,8 @@ extends Node2D
 
 
 export (Vector2) var roomCounts = Vector2(13,10)
+export (int) var userSeed = 125
+export (bool) var randomSeed = false
 
 var levelBuilder:SceneBuilderTilemap = null
 var tilesetBuilder =  TilesetBuilder.new()
@@ -35,9 +37,9 @@ func _ready():
 	self.levelBuilder.AddLadderPattern(load("res://Sprites/Patterns/LADDER-003.png"))
 	
 	# assign scene tilemap
-	self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
+	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
 	self.levelBuilder.SetTargetTilemap($"Tilemaps/L1-BASE",SceneBuilderTilemap.eLayerType.BASE)
-	self.levelBuilder.SetTargetTilemap($"Tilemaps/L2-FRONT",SceneBuilderTilemap.eLayerType.FOREGROUND)
+	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L2-FRONT",SceneBuilderTilemap.eLayerType.FOREGROUND)
 	
 	# add pattern color definition for:
 	
@@ -56,7 +58,7 @@ func _ready():
 	# ...
 	
 	# initialzie builder
-	self.levelBuilder.Initialize(roomCounts,2019,false)
+	self.levelBuilder.Initialize(roomCounts,self.userSeed,self.randomSeed)
 	
 	# create minimap
 	self.levelBuilder.GenerateMinimap()

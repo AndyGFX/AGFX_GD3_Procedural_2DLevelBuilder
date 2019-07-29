@@ -6,10 +6,10 @@
 
 [node name="MAIN" type="Node2D"]
 script = ExtResource( 1 )
-roomCounts = Vector2( 3, 3 )
+roomCounts = Vector2( 5, 3 )
+randomSeed = true
 
 [node name="Tilemaps" type="Node2D" parent="."]
-scale = Vector2( 0.5, 0.5 )
 
 [node name="L0-BACK" type="TileMap" parent="Tilemaps"]
 tile_set = ExtResource( 2 )
@@ -27,6 +27,7 @@ cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="Minimap" type="Sprite" parent="Tilemaps"]
-scale = Vector2( 8, 8 )
+position = Vector2( 9, 10 )
+scale = Vector2( 4, 4 )
 texture = ExtResource( 3 )
 centered = false
