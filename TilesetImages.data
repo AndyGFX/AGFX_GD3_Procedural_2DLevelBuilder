@@ -8,7 +8,7 @@
 	"1": {
 		"height": 16,
 		"name": "WALL",
-		"src": "res://Sprites/AutoTile_1.png",
+		"src": "res://Sprites/AutoTile_1a.png",
 		"width": 16
 	},
 	"2": {

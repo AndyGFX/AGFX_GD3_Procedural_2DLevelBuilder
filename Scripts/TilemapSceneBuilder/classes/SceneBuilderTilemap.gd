@@ -8,6 +8,7 @@ enum eTileType {WALL,LADDER,PLATFORM,ONEWAYPLATFORM}
 var wallPatterns:Array = []
 var ladderPatterns:Array = []
 var platformPatterns:Array = []
+var backgroundPatterns:Array = []
 var scanColor:Array = []
 var targetLayers:Array = []
 var layerType:int = eLayerType.BASE
@@ -84,6 +85,14 @@ func AddLadderPattern(sprite:Texture)->void:
 func AddPlatformPattern(sprite:Texture)->void:
 	self.platformPatterns.append(sprite.get_data())
 	pass
+	
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
+func AddBackgroundPattern(sprite:Texture)->void:
+	self.backgroundPatterns.append(sprite.get_data())
+	pass
+	
 # ----------------------------------------------------------------------------------------
 #
 # ----------------------------------------------------------------------------------------
@@ -104,7 +113,27 @@ func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
 	return -1
 	
 func DrawRoomBackground(layer,room_x,room_y):
-	pass
+	var tilemap = layer.tilemap
+	var pixel:Color = Color.black
+	var rnd_background_id:int = rand_range(0,self.backgroundPatterns.size())
+	
+	var flipX:bool = false
+	
+	if self.enableFlipRoom and randf()>=0.5: flipX=true
+	
+	for x in range(0,self.roomSize.x):
+		for y in range(0,self.roomSize.y):
+			
+			var  rx:int = room_x*self.roomSize.x + x 
+			var  ry:int = room_y*self.roomSize.x + y 
+			
+			if flipX:
+				rx = room_x*self.roomSize.x + self.roomSize.x - x - 1
+	
+			pixel = GetPixelPatternColor(self.backgroundPatterns[rnd_background_id],x,y)
+			self.DrawTileToLayer(layer,eTileType.WALL,rx,ry,pixel)
+			
+			tilemap.update_bitmask_area(Vector2(rx,ry))
 	
 func DrawRoomInterior(layer,room_x,room_y):
 	
@@ -187,9 +216,9 @@ func DrawRoomForeground(tilemap,room_x,room_y):
 func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	
 #	# paint Background
-#	if layer.type == eLayerType.BACKGROUND:
-#		self.DrawRoomBackground(layer,room_x,room_y)
-#
+	if layer.type == eLayerType.BACKGROUND:
+		self.DrawRoomBackground(layer,room_x,room_y)
+
 	# paint base [platforms, laggders, ...]
 	if layer.type == eLayerType.BASE:
 		self.DrawRoomInterior(layer,room_x,room_y)

@@ -21,6 +21,14 @@ func _ready():
 	# create builder
 	self.levelBuilder = SceneBuilderTilemap.new()
 	self.levelBuilder.enableFlipRoom = self.enableFlipRoom
+	
+	# add patterns for BACKGROUND
+	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-001.png"))
+	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-002.png"))
+	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-003.png"))
+	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-004.png"))
+	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-005.png"))
+	
 	# add patterns for WALLS
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-0.png"))
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-1.png"))
@@ -38,14 +46,15 @@ func _ready():
 	self.levelBuilder.AddLadderPattern(load("res://Sprites/Patterns/LADDER-003.png"))
 	
 	# assign scene tilemap
-	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
+	self.levelBuilder.SetTargetTilemap($"Tilemaps/L0-BACK",SceneBuilderTilemap.eLayerType.BACKGROUND)
 	self.levelBuilder.SetTargetTilemap($"Tilemaps/L1-BASE",SceneBuilderTilemap.eLayerType.BASE)
 	#self.levelBuilder.SetTargetTilemap($"Tilemaps/L2-FRONT",SceneBuilderTilemap.eLayerType.FOREGROUND)
 	
 	# add pattern color definition for:
 	
 	# BACKGROUND layer
-	# ...
+	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BACKGROUND,0,SceneBuilderTilemap.eTileType.WALL,Color.black)
+	
 	
 	# BASE layer
 	self.levelBuilder.AddScanColor(SceneBuilderTilemap.eLayerType.BASE,1,SceneBuilderTilemap.eTileType.WALL,Color.black)
@@ -73,7 +82,7 @@ func _ready():
 func PrepareTilesets()->void:
 	var images_json = { 		
 		"0" : {"name": "BACK" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_0.png"},
-		"1" : {"name": "WALL" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_1.png"},
+		"1" : {"name": "WALL" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_1a.png"},
 		"2" : {"name": "ONWAY" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_OneWay.png"},
 		"3" : {"name": "LADDER" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_Ladder.png"}
 	}
