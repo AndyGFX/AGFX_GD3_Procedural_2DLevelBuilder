@@ -3,7 +3,7 @@ class_name SceneBuilderTilemap
 
 enum eLayerType { BACKGROUND, BASE, FOREGROUND}
 enum eTileType {WALL,LADDER,PLATFORM,ONEWAYPLATFORM}
-
+enum eBackgroundMode {PATTERN,CONWAY}
 
 var wallPatterns:Array = []
 var ladderPatterns:Array = []
@@ -17,10 +17,15 @@ var roomsCount:Vector2 = Vector2(12,10)
 var roomSize:Vector2 = Vector2(0,0)
 var minimap:Image=null
 var enableFlipRoom:bool = false
+var bkgMode = eBackgroundMode.PATTERN
+
+var conway:ProceduralConways
+
 # ----------------------------------------------------------------------------------------
 #
 # ----------------------------------------------------------------------------------------
 func Initialize(roomsCount:Vector2,userSeed:int,randomSeed:bool = true)->void:
+	
 	self.roomsCount = roomsCount
 	self.rooms = ProceduralRooms.new(self.roomsCount.x,self.roomsCount.y,randomSeed,userSeed)	
 	
@@ -29,6 +34,8 @@ func Initialize(roomsCount:Vector2,userSeed:int,randomSeed:bool = true)->void:
 	
 	self.minimap = Image.new()
 	self.minimap.create(self.roomsCount.x*2+1,self.roomsCount.y*2+1,false,Image.FORMAT_RGBA8)
+	
+	
 
 # ----------------------------------------------------------------------------------------
 #
@@ -51,6 +58,23 @@ func GenerateMinimap():
 	self.minimap.unlock()
 	pass
 
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
+func SetBackgroundMode(mode:int)->void:
+	self.bkgMode = mode
+	pass
+	
+func SetBackgroundConway(cellSpawnChance,birthLimit,deathLimit,repeatCount)->void:
+	
+	self.conway = ProceduralConways.new(self.roomsCount.x*self.roomSize.x,self.roomsCount.y*self.roomSize.y)
+	self.conway.cellSpawnChance = cellSpawnChance
+	self.conway.birthLimit = deathLimit
+	self.conway.deathLimit = deathLimit
+	self.conway.repeatCount = repeatCount
+	
+	pass
+	
 # ----------------------------------------------------------------------------------------
 #
 # ----------------------------------------------------------------------------------------
@@ -112,7 +136,32 @@ func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
 			return self.scanColor[i].tile_id;
 	return -1
 	
-func DrawRoomBackground(layer,room_x,room_y):
+func DrawRoomBackground_CONWAY(layer,room_x,room_y):
+	var tilemap = layer.tilemap
+	var pixel:Color = Color.black
+	var rnd_background_id:int = rand_range(0,self.backgroundPatterns.size())
+	
+	var flipX:bool = false
+	
+	if self.enableFlipRoom and randf()>=0.5: flipX=true
+	
+	for x in range(0,self.roomSize.x):
+		for y in range(0,self.roomSize.y):
+			
+			var  rx:int = room_x*self.roomSize.x + x 
+			var  ry:int = room_y*self.roomSize.x + y 
+			
+			if flipX:
+				rx = room_x*self.roomSize.x + self.roomSize.x - x - 1
+	
+			var cell = self.conway.data[rx][ry].value
+			if cell==1:
+				self.DrawTileToLayer(layer,eTileType.WALL,rx,ry,pixel)
+			
+			tilemap.update_bitmask_area(Vector2(rx,ry))
+			
+	
+func DrawRoomBackground_PATTERN(layer,room_x,room_y):
 	var tilemap = layer.tilemap
 	var pixel:Color = Color.black
 	var rnd_background_id:int = rand_range(0,self.backgroundPatterns.size())
@@ -217,7 +266,10 @@ func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	
 #	# paint Background
 	if layer.type == eLayerType.BACKGROUND:
-		self.DrawRoomBackground(layer,room_x,room_y)
+		if self.bkgMode == eBackgroundMode.PATTERN:
+			self.DrawRoomBackground_PATTERN(layer,room_x,room_y)
+		else:
+			self.DrawRoomBackground_CONWAY(layer,room_x,room_y)
 
 	# paint base [platforms, laggders, ...]
 	if layer.type == eLayerType.BASE:
@@ -237,13 +289,17 @@ func GenerateLayer(layer:Dictionary)->void:
 	for x in range(0,self.roomsCount.x):
 		for y in range(0,self.roomsCount.y):		
 			self.DrawRoom(layer,x,y)
-			print("["+String(x)+","+String(y)+"]="+self.rooms.ToString(x,y))
+			#print("["+String(x)+","+String(y)+"]="+self.rooms.ToString(x,y))
 
 # ----------------------------------------------------------------------------------------
 #
 # ----------------------------------------------------------------------------------------
 func Build()->void:
 	self.rooms.Build()
+	
+	if self.bkgMode == eBackgroundMode.CONWAY:
+		self.conway.Build()
+		
 	for layer in range(0,targetLayers.size()):
 		self.targetLayers[layer].tilemap.clear()
 		self.GenerateLayer(self.targetLayers[layer])	

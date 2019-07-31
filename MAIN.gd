@@ -7,6 +7,11 @@ export (bool) var randomSeed = false
 export (bool) var enableFlipRoom = false
 var levelBuilder:SceneBuilderTilemap = null
 var tilesetBuilder =  TilesetBuilder.new()
+# parameters for CONWAYS background
+export (int, 100) var cellSpawnChance = 50
+export (int, 1,8) var birthLimit = 4
+export (int, 1,8) var deathLimit = 4
+export (int, 1,10) var repeatCount = 4
 
 
 func _ready():
@@ -68,7 +73,17 @@ func _ready():
 	# ...
 	
 	# initialzie builder
+	
+	
 	self.levelBuilder.Initialize(roomCounts,self.userSeed,self.randomSeed)
+	
+	# init BKG from PATTERNS
+	#self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.PATTERN)
+	
+	# init BKG from CONWAY
+	self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.CONWAY)
+	self.levelBuilder.SetBackgroundConway(self.cellSpawnChance,self.birthLimit, self.deathLimit,self.repeatCount)
+	
 	
 	# create minimap
 	self.levelBuilder.GenerateMinimap()

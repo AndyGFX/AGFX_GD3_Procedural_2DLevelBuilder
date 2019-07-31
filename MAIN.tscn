@@ -70,4 +70,5 @@ margin_top = 3.0
 margin_right = 87.0
 margin_bottom = 23.0
 text = "Generate"
+
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
