@@ -8,7 +8,6 @@
     - from patterns
     - or as proceduraly generated cave (CONWAYS method) [https://github.com/AndyGFX/GD3_Procedural_Nodes]
 - user defined room counts
-- user defined tiles count for room
 - room size is calculated from pattern size
 - generate rooms randomized or via seed
 
