@@ -19,15 +19,21 @@ var minimap:Image=null
 var enableFlipRoom:bool = false
 var bkgMode = eBackgroundMode.PATTERN
 
+# seed ui used for procedural rooms and conways (not for room patterns)
 var conway:ProceduralConways
+var _seed:int = 2019
+var _rndSeed:bool = false
 
 # ----------------------------------------------------------------------------------------
-#
+# Initialize builder
 # ----------------------------------------------------------------------------------------
 func Initialize(roomsCount:Vector2,userSeed:int,randomSeed:bool = true)->void:
 	
+	
+	self._seed = userSeed
+	self._rndSeed = randomSeed
 	self.roomsCount = roomsCount
-	self.rooms = ProceduralRooms.new(self.roomsCount.x,self.roomsCount.y,randomSeed,userSeed)	
+	self.rooms = ProceduralRooms.new(self.roomsCount.x,self.roomsCount.y,self._rndSeed,self._seed)	
 	
 	self.rooms.Build()
 	self.roomSize = self.wallPatterns[0].get_size()
@@ -38,7 +44,7 @@ func Initialize(roomsCount:Vector2,userSeed:int,randomSeed:bool = true)->void:
 	
 
 # ----------------------------------------------------------------------------------------
-#
+# Geberate minimap
 # ----------------------------------------------------------------------------------------
 func GenerateMinimap():
 
@@ -59,12 +65,15 @@ func GenerateMinimap():
 	pass
 
 # ----------------------------------------------------------------------------------------
-#
+# Set paint mode for backgroun PATTERN or CONWAY
 # ----------------------------------------------------------------------------------------
 func SetBackgroundMode(mode:int)->void:
 	self.bkgMode = mode
 	pass
-	
+
+# ----------------------------------------------------------------------------------------
+# Set background properties for CONWAY'S paint mode
+# ----------------------------------------------------------------------------------------
 func SetBackgroundConway(cellSpawnChance,birthLimit,deathLimit,repeatCount)->void:
 	
 	self.conway = ProceduralConways.new(self.roomsCount.x*self.roomSize.x,self.roomsCount.y*self.roomSize.y)
@@ -72,53 +81,55 @@ func SetBackgroundConway(cellSpawnChance,birthLimit,deathLimit,repeatCount)->voi
 	self.conway.birthLimit = deathLimit
 	self.conway.deathLimit = deathLimit
 	self.conway.repeatCount = repeatCount
+	self.conway._seed_ = self._seed
+	self.conway.randomSeed = self._rndSeed
 	
 	pass
 	
 # ----------------------------------------------------------------------------------------
-#
+# Set scene tilemap and assing type of layer
 # ----------------------------------------------------------------------------------------
 func SetTargetTilemap(tm:TileMap, type:int)->void:
 	self.targetLayers.append({"tilemap":tm,"type":type})	
 	pass
 
 # ----------------------------------------------------------------------------------------
-#
+# add color for pattern in layer and assigned tile ID
 # ----------------------------------------------------------------------------------------
 func AddScanColor(layer:int,tileid:int,pattern:int,c:Color)->void:
 	self.scanColor.append({"layer":layer,"tile_id":tileid,"pattern":pattern,"color":c})
 	pass
 
 # ----------------------------------------------------------------------------------------
-#
+# add patterns to WALL's patterns
 # ----------------------------------------------------------------------------------------
 func AddWallPattern(sprite:Texture)->void:
 	self.wallPatterns.append(sprite.get_data())
 	pass
 
 # ----------------------------------------------------------------------------------------
-#
+# add patterns to LADDER's patterns
 # ----------------------------------------------------------------------------------------
 func AddLadderPattern(sprite:Texture)->void:
 	self.ladderPatterns.append(sprite.get_data())
 	pass
 
 # ----------------------------------------------------------------------------------------
-#
+# add patterns to PLATFORM's patterns
 # ----------------------------------------------------------------------------------------
 func AddPlatformPattern(sprite:Texture)->void:
 	self.platformPatterns.append(sprite.get_data())
 	pass
 	
 # ----------------------------------------------------------------------------------------
-#
+# add patterns to BACKGROUND's patterns
 # ----------------------------------------------------------------------------------------
 func AddBackgroundPattern(sprite:Texture)->void:
 	self.backgroundPatterns.append(sprite.get_data())
 	pass
 	
 # ----------------------------------------------------------------------------------------
-#
+# Read pixel color from pattern
 # ----------------------------------------------------------------------------------------
 func GetPixelPatternColor(pattern:Image,x,y)->Color:
 	var res:Color = Color.black
@@ -127,7 +138,7 @@ func GetPixelPatternColor(pattern:Image,x,y)->Color:
 	pattern.unlock()
 	return res
 # ----------------------------------------------------------------------------------------
-#
+# Get Tile ID from pattern and color
 # ----------------------------------------------------------------------------------------
 func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
 	for i in range(0,self.scanColor.size()):
@@ -135,7 +146,10 @@ func GetTileIdByColor(layer:int,pattern:int,color:Color)->int:
 		if self.scanColor[i].layer == layer and self.scanColor[i].color==color:
 			return self.scanColor[i].tile_id;
 	return -1
-	
+
+# ----------------------------------------------------------------------------------------
+# DRAW room to BACKGROUND in CONWAY mode
+# ----------------------------------------------------------------------------------------
 func DrawRoomBackground_CONWAY(layer,room_x,room_y):
 	var tilemap = layer.tilemap
 	var pixel:Color = Color.black
@@ -160,7 +174,10 @@ func DrawRoomBackground_CONWAY(layer,room_x,room_y):
 			
 			tilemap.update_bitmask_area(Vector2(rx,ry))
 			
-	
+
+# ----------------------------------------------------------------------------------------
+# DRAW room to BACKGROUND in PATTERM mode
+# ----------------------------------------------------------------------------------------
 func DrawRoomBackground_PATTERN(layer,room_x,room_y):
 	var tilemap = layer.tilemap
 	var pixel:Color = Color.black
@@ -183,7 +200,10 @@ func DrawRoomBackground_PATTERN(layer,room_x,room_y):
 			self.DrawTileToLayer(layer,eTileType.WALL,rx,ry,pixel)
 			
 			tilemap.update_bitmask_area(Vector2(rx,ry))
-	
+
+# ----------------------------------------------------------------------------------------
+# DRAW room to BASE layer
+# ----------------------------------------------------------------------------------------
 func DrawRoomInterior(layer,room_x,room_y):
 	
 	var tilemap = layer.tilemap
@@ -212,7 +232,10 @@ func DrawRoomInterior(layer,room_x,room_y):
 			
 			
 			tilemap.update_bitmask_area(Vector2(rx,ry))
-	
+
+# ----------------------------------------------------------------------------------------
+# DRAW tile to tilemap
+# ----------------------------------------------------------------------------------------
 func DrawTileToLayer(layer:Dictionary,pattern:int,rx:int,ry:int,pixelColor:Color):
 	
 	var tile_id = -1
@@ -228,6 +251,9 @@ func DrawTileToLayer(layer:Dictionary,pattern:int,rx:int,ry:int,pixelColor:Color
 		layer.tilemap.set_cell(rx,ry,tile_id)
 	pass
 
+# ----------------------------------------------------------------------------------------
+# DRAW room walls to BASE layer
+# ----------------------------------------------------------------------------------------
 func DrawRoomWalls(layer,room_x,room_y):
 	
 	var tilemap = layer.tilemap
@@ -259,9 +285,15 @@ func DrawRoomWalls(layer,room_x,room_y):
 		
 			tilemap.update_bitmask_area(Vector2(rx,ry))
 
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
 func DrawRoomForeground(tilemap,room_x,room_y):
 	pass
-	
+
+# ----------------------------------------------------------------------------------------
+# Draw ROOM to layer at X,Y
+# ----------------------------------------------------------------------------------------
 func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 	
 #	# paint Background
@@ -283,7 +315,9 @@ func DrawRoom(layer:Dictionary,room_x:int, room_y:int):
 #	if layer.type == eLayerType.FOREGROUND:
 #		self.DrawRoomForeground(layer,room_x,room_y)
 
-	
+# ----------------------------------------------------------------------------------------
+# Draw ROOMS in defined LAYER
+# ----------------------------------------------------------------------------------------
 func GenerateLayer(layer:Dictionary)->void:
 	
 	for x in range(0,self.roomsCount.x):
@@ -292,7 +326,7 @@ func GenerateLayer(layer:Dictionary)->void:
 			#print("["+String(x)+","+String(y)+"]="+self.rooms.ToString(x,y))
 
 # ----------------------------------------------------------------------------------------
-#
+# BUILD scene for assigned layers (tilemaps)
 # ----------------------------------------------------------------------------------------
 func Build()->void:
 	self.rooms.Build()

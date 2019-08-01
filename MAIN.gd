@@ -7,7 +7,9 @@ export (bool) var randomSeed = false
 export (bool) var enableFlipRoom = false
 var levelBuilder:SceneBuilderTilemap = null
 var tilesetBuilder =  TilesetBuilder.new()
+
 # parameters for CONWAYS background
+export (bool) var useConaway = true
 export (int, 100) var cellSpawnChance = 50
 export (int, 1,8) var birthLimit = 4
 export (int, 1,8) var deathLimit = 4
@@ -17,11 +19,10 @@ export (int, 1,10) var repeatCount = 4
 func _ready():
 	
 	randomize()
-	# create Tilesets
+	
+	# create Tilesets (optional - not needed if you have your own tilsets assigned to tilemaps)
 	self.PrepareTilesets()
 	
-	# attach tileset to tilemap
-	#$"Tilemaps/L0-BACK".set_tileset(load ())
 	
 	# create builder
 	self.levelBuilder = SceneBuilderTilemap.new()
@@ -34,13 +35,13 @@ func _ready():
 	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-004.png"))
 	self.levelBuilder.AddBackgroundPattern(load("res://Sprites/Patterns/BACKGROUND-005.png"))
 	
-	# add patterns for WALLS
+	# add patterns for WALLS (interriror)
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-0.png"))
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-1.png"))
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-2.png"))
 	self.levelBuilder.AddWallPattern(load("res://Sprites/Patterns/WALL-3.png"))
 	
-	# add patterns for rooms withou UP exit -> PLATFORMS | ONE WAY PLATFORMS
+	# add patterns for rooms without UP exit -> PLATFORMS | ONE WAY PLATFORMS
 	self.levelBuilder.AddPlatformPattern(load("res://Sprites/Patterns/PLATFORMS-001.png"))
 	self.levelBuilder.AddPlatformPattern(load("res://Sprites/Patterns/PLATFORMS-002.png"))
 	self.levelBuilder.AddPlatformPattern(load("res://Sprites/Patterns/PLATFORMS-003.png"))
@@ -72,18 +73,20 @@ func _ready():
 	# FOREGROUND layer
 	# ...
 	
+	
 	# initialzie builder
 	
 	
 	self.levelBuilder.Initialize(roomCounts,self.userSeed,self.randomSeed)
 	
-	# init BKG from PATTERNS
-	#self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.PATTERN)
-	
-	# init BKG from CONWAY
-	self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.CONWAY)
-	self.levelBuilder.SetBackgroundConway(self.cellSpawnChance,self.birthLimit, self.deathLimit,self.repeatCount)
-	
+	if self.useConaway:
+		# init BKG from CONWAY
+		self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.CONWAY)
+		self.levelBuilder.SetBackgroundConway(self.cellSpawnChance,self.birthLimit, self.deathLimit,self.repeatCount)
+	else:
+		# init BKG from PATTERNS
+		self.levelBuilder.SetBackgroundMode(SceneBuilderTilemap.eBackgroundMode.PATTERN)
+		
 	
 	# create minimap
 	self.levelBuilder.GenerateMinimap()
@@ -95,12 +98,13 @@ func _ready():
 	
 	
 func PrepareTilesets()->void:
-	var images_json = { 		
+	var images_json = {
 		"0" : {"name": "BACK" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_0.png"},
 		"1" : {"name": "WALL" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_1a.png"},
 		"2" : {"name": "ONWAY" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_OneWay.png"},
 		"3" : {"name": "LADDER" ,"width":16,"height":16, "src":"res://Sprites/AutoTile_Ladder.png"}
 	}
+	
 	Utils.SaveJSON("res://TilesetImages.data",images_json,true)
 	tilesetBuilder.BuildFromFile(Utils.LoadJSON("res://TilesetImages.data"),"BASE-ProceduralTilesets.tres")
 	pass
@@ -110,4 +114,4 @@ func _on_Button_pressed():
 	self.levelBuilder.Build()
 	self.levelBuilder.GenerateMinimap()
 	$Tilemaps/Minimap.set_texture(Utils.CreateTextureFromImage(self.levelBuilder.minimap))
-	pass # Replace with function body.
+	

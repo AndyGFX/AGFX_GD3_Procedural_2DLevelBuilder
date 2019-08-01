@@ -26,6 +26,7 @@ adjustment_contrast = 1.21
 [node name="MAIN" type="Node2D"]
 script = ExtResource( 1 )
 roomCounts = Vector2( 5, 3 )
+userSeed = 1965
 randomSeed = true
 enableFlipRoom = true
 
@@ -70,5 +71,4 @@ margin_top = 3.0
 margin_right = 87.0
 margin_bottom = 23.0
 text = "Generate"
-
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
