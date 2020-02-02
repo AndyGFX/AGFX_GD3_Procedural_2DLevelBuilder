@@ -20,7 +20,7 @@ func _ready():
 	
 	randomize()
 	
-	# create Tilesets (optional - not needed if you have your own tilsets assigned to tilemaps)
+	# create Tilesets (optional - not needed if you have your own tilsets assigned to tilemaps)	
 	self.PrepareTilesets()
 	
 	
