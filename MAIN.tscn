@@ -39,7 +39,6 @@ scale = Vector2( 68.0625, 42.5625 )
 texture = ExtResource( 2 )
 
 [node name="Tilemaps" type="Node2D" parent="."]
-editor/display_folded = true
 position = Vector2( 7, 29 )
 
 [node name="Minimap" type="Sprite" parent="Tilemaps"]
@@ -72,4 +71,5 @@ margin_top = 3.0
 margin_right = 87.0
 margin_bottom = 23.0
 text = "Generate"
+
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

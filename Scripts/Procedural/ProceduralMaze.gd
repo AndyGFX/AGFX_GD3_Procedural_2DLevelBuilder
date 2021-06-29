@@ -78,7 +78,7 @@ func DigMaze(Maze, x:int, y:int)->void:
 
 		intCount = self.ValidCount(Maze, x, y)
 		pass
-	 g_intDepth = g_intDepth - 1
+	g_intDepth = g_intDepth - 1
 
 
 func ValidMove(Maze, x:int, y:int)->int:
